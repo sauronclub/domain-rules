@@ -1,0 +1,269 @@
+# 基于mihomo官方覆写规范的配置模板
+# 参考文档：https://mihomo.party/docs/guide/override/yaml
+
+override:
+  # 1. 代理节点分组（覆盖原有节点组定义）
+  proxy-groups:
+    # 基础功能分组
+    - name: 全球拦截
+      type: select
+      proxies:
+        - REJECT
+        - DIRECT
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    - name: 全球直连
+      type: select
+      proxies:
+        - DIRECT
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    # 节点池分组（负载均衡）
+    - name: WKS
+      type: load-balance
+      filter: "(WKS)"  # 匹配节点名称包含WKS的节点
+      proxies: []  # 留空，由filter自动填充
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    - name: COM
+      type: load-balance
+      filter: "(.com|.cn|.hk|.org|.tw)"
+      proxies: []
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    - name: AWS
+      type: load-balance
+      filter: "(JP AWS)"
+      proxies: []
+      url: https://video.dmm.co.jp/av/
+      interval: 300
+      timeout: 5
+
+    # 地区节点分组
+    - name: 香港
+      type: load-balance
+      filter: "(港|HK|hk|Hong Kong|HongKong|hongkong|HKG)"
+      proxies: []
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    - name: 日本
+      type: load-balance
+      filter: "(?!.*JP AWS)(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|[^-]日|JP|Japan)"
+      proxies: []
+      url: https://www.amazon.co.jp
+      interval: 300
+      timeout: 5
+
+    - name: 美国
+      type: load-balance
+      filter: "(美|US|United States|ATL|BUF|DFW|EWR|IAD|LAX|MCI|MIA|ORD|PHX|PDX|SEA|SJC)"
+      proxies: []
+      url: http://www.google.com/
+      interval: 300
+      timeout: 150
+
+    - name: 韩国
+      type: load-balance
+      filter: "(KR|Korea|KOR|首尔|韩|韓)"
+      proxies: []
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    - name: 新加坡
+      type: load-balance
+      filter: "(SG|Singapore|新加坡|狮城|SGP)"
+      proxies: []
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    - name: 其它国家
+      type: load-balance
+      filter: "(CA|Canada|加拿大|蒙特利尔|温哥华|DE|Germany|德国|德國|FR|France|法国|法國|GB|UK|England|United Kingdom|英国|英國|NL|Netherlands|荷兰|荷蘭|PL|Poland|波兰|波蘭|RU|Russia|俄罗斯|俄羅斯|莫斯科|Other)"
+      proxies: []
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    # 应用服务分组（选择型，手动切换节点）
+    - name: YouTube
+      type: select
+      proxies:
+        - WKS
+        - COM
+        - AWS
+        - 香港
+        - 日本
+        - 美国
+        - 韩国
+        - 新加坡
+        - 其它国家
+      url: https://www.youtube.com/
+      interval: 300
+      timeout: 5
+
+    - name: Telegram
+      type: select
+      proxies:
+        - WKS
+        - COM
+        - AWS
+        - 香港
+        - 日本
+        - 美国
+        - 韩国
+        - 新加坡
+        - 其它国家
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    - name: AI
+      type: select
+      proxies:
+        - WKS
+        - COM
+        - AWS
+        - 香港
+        - 日本
+        - 美国
+        - 韩国
+        - 新加坡
+        - 其它国家
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    - name: Google
+      type: select
+      proxies:
+        - WKS
+        - COM
+        - AWS
+        - 香港
+        - 日本
+        - 美国
+        - 韩国
+        - 新加坡
+        - 其它国家
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    - name: GitHub
+      type: select
+      proxies:
+        - WKS
+        - COM
+        - AWS
+        - 香港
+        - 日本
+        - 美国
+        - 韩国
+        - 新加坡
+        - 其它国家
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    - name: Cloudflare
+      type: select
+      proxies:
+        - WKS
+        - COM
+        - AWS
+        - 香港
+        - 日本
+        - 美国
+        - 韩国
+        - 新加坡
+        - 其它国家
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    - name: JPAV
+      type: select
+      proxies:
+        - 日本
+        - AWS
+      url: https://video.dmm.co.jp/av/
+      interval: 300
+      timeout: 5
+
+    # 漏网之鱼分组（补充未覆盖的流量）
+    - name: 漏网之鱼
+      type: select
+      proxies:
+        - WKS
+        - COM
+        - AWS
+        - 香港
+        - 日本
+        - 美国
+        - 韩国
+        - 新加坡
+        - 其它国家
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+    - name: 漏网之鱼直连
+      type: select
+      proxies:
+        - 全球直连
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5
+
+  # 2. 规则列表（按优先级排序，覆盖原有ruleset）
+  rules:
+    # 基础拦截规则（最高优先级）
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanAD.list,全球拦截
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanProgramAD.list,全球拦截
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanPrivacy.list,全球拦截  # 新增隐私保护
+
+    # 核心服务规则
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Clash/Google/Google.list,Google
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Telegram.list,Telegram
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/AI.list,AI
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/juewuy/ShellClash/master/rules/ai.list,AI
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/Copilot.list,AI
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/GithubCopilot.list,AI
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/Claude.list,AI
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/YouTube.list,YouTube
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/sauronclub/domain-rules/refs/heads/main/GitHub.list,GitHub
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/sauronclub/domain-rules/refs/heads/main/cloudflare.list,Cloudflare
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/sauronclub/domain-rules/refs/heads/main/JPAV.list,JPAV
+
+    # 漏网之鱼规则
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyOther.list,漏网之鱼
+    - RULE-SET,https://github.sauronclub.com/https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/DirectOther.list,漏网之鱼直连
+
+    # 全球直连规则（最低优先级，兜底）
+    - GEOIP,LAN,全球直连
+    - GEOIP,CN,全球直连
+
+  # 3. 可选：覆盖默认代理节点（若需新增自定义节点可在此添加）
+  # proxies:
+  #   - name: 自定义节点1
+  #     type: vmess
+  #     server: example.com
+  #     port: 443
+  #     uuid: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  #     alterId: 0
+  #     cipher: auto
+  #     tls: true
+  #     servername: example.com
+  #     network: ws
